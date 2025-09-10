@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LoginView: View {
+    
     @StateObject private var viewModel = LoginViewModel()
     
     var body: some View {
@@ -33,6 +34,7 @@ struct LoginView: View {
                                 let success = await viewModel.loginUser()
                                 if success {
                                     print("User logged in successfully")
+                                    viewModel.isLoggedIn = true
                                 }
                             }
                         }
@@ -62,6 +64,9 @@ struct LoginView: View {
                 }
             }
             .navigationBarBackButtonHidden(true)
+            .navigationDestination(isPresented: $viewModel.isLoggedIn) {
+                HomeView()
+            }
         }
         .alert("Heyy!!!", isPresented: $viewModel.showAlert) {
             Button("OK") {

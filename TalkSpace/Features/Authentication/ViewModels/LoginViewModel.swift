@@ -14,6 +14,7 @@ final class LoginViewModel: ObservableObject {
     @Published var isLoading: Bool = false
     @Published var errorMessage: String? = nil
     @Published var showAlert: Bool = false
+    @Published var isLoggedIn = false
     
     private let authService: AuthServicable
     

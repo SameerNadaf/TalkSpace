@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 import PhotosUI
 
-class RegisterViewModel: ObservableObject {
+final class RegisterViewModel: ObservableObject {
     
     @Published var email: String = ""
     @Published var password: String = ""
@@ -25,6 +25,7 @@ class RegisterViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     @Published var showAlert: Bool = false
     @Published var isLoading: Bool = false
+    @Published var isRegistered: Bool = false
     
     private let authService: AuthServicable
     

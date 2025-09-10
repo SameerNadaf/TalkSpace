@@ -32,11 +32,4 @@ final class AuthService: AuthServicable {
         return result
     }
     
-    func signOut() throws {
-        try firebaseManager.signOut()
-    }
-    
-    func currentUser() -> User? {
-        firebaseManager.currentUser()
-    }
 }

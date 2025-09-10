@@ -35,6 +35,7 @@ struct RegisterView: View {
                                 let success = await viewModel.registerUser()
                                 if success {
                                     print("User registered successfully!")
+                                    viewModel.isRegistered = true
                                 }
                             }
                         }
@@ -65,6 +66,9 @@ struct RegisterView: View {
                 
             }
             .navigationBarBackButtonHidden(true)
+            .navigationDestination(isPresented: $viewModel.isRegistered) {
+                HomeView()
+            }
             
         }
         .alert("Heyy!!!", isPresented: $viewModel.showAlert) {

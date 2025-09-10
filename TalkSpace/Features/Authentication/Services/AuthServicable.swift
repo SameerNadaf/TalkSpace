@@ -11,6 +11,4 @@ import FirebaseAuth
 protocol AuthServicable {
     func signIn(email: String, password: String) async throws -> AuthDataResult
     func register(email: String, password: String, imageData: Data?) async throws -> AuthDataResult
-    func signOut() throws
-    func currentUser() -> User?
 }
