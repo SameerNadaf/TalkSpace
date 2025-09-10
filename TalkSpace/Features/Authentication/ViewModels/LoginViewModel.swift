@@ -8,11 +8,41 @@
 import Foundation
 import SwiftUI
 
-class LoginViewModel: ObservableObject {
+final class LoginViewModel: ObservableObject {
     @Published var email: String = ""
     @Published var password: String = ""
+    @Published var isLoading: Bool = false
+    @Published var errorMessage: String? = nil
+    @Published var showAlert: Bool = false
     
-    func hideKeyboard() {
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
+    private let firebaseManager: FirebaseManaging
+    
+    init(firebaseManager: FirebaseManaging = FirebaseManager.shared) {
+        self.firebaseManager = firebaseManager
     }
+    
+    @MainActor
+    func loginUser() async -> Bool {
+        guard !email.isEmpty, !password.isEmpty else {
+            errorMessage = "Please enter email and password."
+            showAlert = true
+            return false
+        }
+        
+        isLoading = true
+        errorMessage = nil
+        
+        do {
+            let result = try await firebaseManager.signInWithEmail(email: email, password: password)
+            print("User logged in successfully: \(result.user.uid)")
+            isLoading = false
+            return true
+        } catch {
+            isLoading = false
+            errorMessage = error.localizedDescription
+            showAlert = true
+            return false
+        }
+    }
+    
 }

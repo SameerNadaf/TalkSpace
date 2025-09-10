@@ -15,13 +15,7 @@ struct RegisterView: View {
     
     var body: some View {
         NavigationStack {
-            ZStack {
-                Color.clear
-                    .contentShape(Rectangle()) // Make empty space tappable
-                    .onTapGesture {
-                        viewModel.hideKeyboard()
-                    }
-                
+            ScrollView {
                 VStack(spacing: 20) {
                     
                     Text("Register")
@@ -30,168 +24,80 @@ struct RegisterView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .padding(.top)
                     
-                    PhotosPicker(selection: $viewModel.selectionImage, matching: .images) {
-                        if let image = viewModel.userAvatar {
-                                Image(uiImage: image)
-                                    .resizable()
-                                    .scaledToFill()
-                                    .clipShape(Circle())
-                                    .frame(width: 150, height: 150)
-                            } else {
-                                Image("user")
-                                    .resizable()
-                                    .scaledToFit()
-                                    .clipShape(Circle())
-                                    .frame(width: 150, height: 150)
+                    userAvatarPicker
+                    
+                    IconTextField(systemImage: "at", placeholder: "Enter Email", text: $viewModel.email)
+                    IconTextField(systemImage: "lock", placeholder: "Enter Password", text: $viewModel.password, isSecure: true)
+                    IconTextField(systemImage: "lock", placeholder: "Confirm Password", text: $viewModel.confirmPassword)
+                    ActionButton(title: "Sign Up") {
+                        Task {
+                            let success = await viewModel.registerUser()
+                            if success {
+                                print("User registered successfully!")
                             }
+                        }
                     }
-                    .padding()
-                    
-                    
-                    emailField
-                    passwordField1
-                    passwordField2
-                    loginButton
-                    orOption
-                    googleButton
-                    Spacer()
-                    logInButton
+                    OrDivider()
+                    GoogleButton(title: "Sign Up with Google") {
+                        
+                    }
+                    footerLink
+                        .padding(.top)
                     
                 }
                 .padding(.horizontal, 40)
                 .frame(maxWidth: 500)
             }
+            .onTapGesture {
+                KeyboardUtils.hideKeyboard()
+            }
             .navigationBarBackButtonHidden(true)
         }
+        .alert("Heyy!!!", isPresented: $viewModel.showAlert) {
+            Button("OK") {
+                
+            }
+        } message: {
+            if let msg = viewModel.errorMessage {
+                Text(msg)
+            }
+        }
+        
     }
 }
 
 extension RegisterView {
     
-    private var emailField: some View {
-        HStack {
-            Image(systemName: "at")
-                .resizable()
-                .scaledToFit()
-                .bold()
-                .foregroundStyle(.secondary)
-                .frame(width: 20, height: 20)
-                .padding(.trailing)
-            
-            VStack {
-                TextField("Enter Email", text: $viewModel.email)
-                    .textContentType(.emailAddress)
-                    .keyboardType(.emailAddress)
-                    .textInputAutocapitalization(.none)
-                    .frame(maxWidth: .infinity)
-                    .accessibilityLabel("Email Address")
-                
-                Rectangle()
-                    .frame(height: 1)
-                    .foregroundColor(.secondary)
-            }
+    private var userAvatarPicker: some View {
+        PhotosPicker(selection: $viewModel.selectionImage, matching: .images) {
+            if let image = viewModel.userAvatar {
+                    Image(uiImage: image)
+                        .resizable()
+                        .scaledToFill()
+                        .frame(width: 150, height: 150)
+                        .clipShape(Circle())
+                        .overlay(
+                            Circle()
+                                .stroke(Color.secondary, lineWidth: 4)
+                        )
+                        
+                        
+                } else {
+                    Image("user")
+                        .resizable()
+                        .scaledToFit()
+                        .clipShape(Circle())
+                        .frame(width: 150, height: 150)
+                        .overlay(
+                            Circle()
+                                .stroke(Color.secondary, lineWidth: 4)
+                        )
+                }
         }
+        .padding()
     }
     
-    private var passwordField1: some View {
-        HStack {
-            Image(systemName: "lock")
-                .resizable()
-                .scaledToFit()
-                .bold()
-                .foregroundStyle(.secondary)
-                .frame(width: 20, height: 20)
-                .padding(.trailing)
-            
-            VStack {
-                SecureField("Enter Password", text: $viewModel.password)
-                    .textContentType(.password)
-                    .frame(maxWidth: .infinity)
-                    .accessibilityLabel("Password")
-                
-                Rectangle()
-                    .frame(height: 1)
-                    .foregroundColor(.secondary)
-            }
-        }
-    }
-    
-    private var passwordField2: some View {
-        HStack {
-            Image(systemName: "lock")
-                .resizable()
-                .scaledToFit()
-                .bold()
-                .foregroundStyle(.secondary)
-                .frame(width: 20, height: 20)
-                .padding(.trailing)
-            
-            VStack {
-                TextField("Confirm Password", text: $viewModel.confirmPassword)
-                    .textContentType(.password)
-                    .frame(maxWidth: .infinity)
-                    .accessibilityLabel("Confirm Password")
-                
-                Rectangle()
-                    .frame(height: 1)
-                    .foregroundColor(.secondary)
-            }
-        }
-        .padding(.bottom)
-    }
-    
-    private var loginButton: some View {
-        Button {
-            
-        } label: {
-            Text("Sign Up")
-                .font(.headline)
-                .foregroundColor(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: StyleConstants.buttonHeight)
-                .background(Color.blue)
-                .clipShape(RoundedRectangle(cornerRadius: StyleConstants.cornerRadius))
-        }
-    }
-    
-    private var orOption: some View {
-        HStack {
-            Rectangle()
-                .frame(height: 1)
-            
-            Text("OR")
-            
-            Rectangle()
-                .frame(height: 1)
-            
-        }
-        .foregroundColor(.secondary)
-        .padding(.bottom)
-    }
-    
-    private var googleButton: some View {
-        Button {
-            
-        } label: {
-            HStack {
-                Image("google")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 25, height: 25)
-                    .font(.headline)
-                Text("Login with Google")
-                    .font(.headline)
-                    .foregroundColor(.primary)
-                    .padding(.leading)
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: StyleConstants.buttonHeight)
-            .background(.secondary.opacity(0.1))
-            .clipShape(RoundedRectangle(cornerRadius: StyleConstants.cornerRadius))
-        }
-    }
-    
-    private var logInButton: some View {
+    private var footerLink: some View {
         HStack {
             Text("Already have an account?")
                 .font(.subheadline)

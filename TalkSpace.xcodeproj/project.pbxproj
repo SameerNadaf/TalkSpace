@@ -10,6 +10,8 @@
 		42DB1F492E7154DB00A15561 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 42DB1F482E7154DB00A15561 /* FirebaseAuth */; };
 		42DB1F4B2E7154DB00A15561 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 42DB1F4A2E7154DB00A15561 /* FirebaseFirestore */; };
 		42DB1F4D2E7154DB00A15561 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 42DB1F4C2E7154DB00A15561 /* FirebaseStorage */; };
+		42DB1F522E71619900A15561 /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 42DB1F512E71619900A15561 /* GoogleSignIn */; };
+		42DB1F542E71619900A15561 /* GoogleSignInSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 42DB1F532E71619900A15561 /* GoogleSignInSwift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -58,7 +60,9 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				42DB1F542E71619900A15561 /* GoogleSignInSwift in Frameworks */,
 				42DB1F492E7154DB00A15561 /* FirebaseAuth in Frameworks */,
+				42DB1F522E71619900A15561 /* GoogleSignIn in Frameworks */,
 				42DB1F4B2E7154DB00A15561 /* FirebaseFirestore in Frameworks */,
 				42DB1F4D2E7154DB00A15561 /* FirebaseStorage in Frameworks */,
 			);
@@ -124,6 +128,8 @@
 				42DB1F482E7154DB00A15561 /* FirebaseAuth */,
 				42DB1F4A2E7154DB00A15561 /* FirebaseFirestore */,
 				42DB1F4C2E7154DB00A15561 /* FirebaseStorage */,
+				42DB1F512E71619900A15561 /* GoogleSignIn */,
+				42DB1F532E71619900A15561 /* GoogleSignInSwift */,
 			);
 			productName = TalkSpace;
 			productReference = 428F63542E706A5100586B58 /* TalkSpace.app */;
@@ -209,6 +215,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				42DB1F472E7154DB00A15561 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				42DB1F502E71619900A15561 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 428F63552E706A5100586B58 /* Products */;
@@ -583,6 +590,14 @@
 				minimumVersion = 12.2.0;
 			};
 		};
+		42DB1F502E71619900A15561 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.0.0;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -600,6 +615,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 42DB1F472E7154DB00A15561 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseStorage;
+		};
+		42DB1F512E71619900A15561 /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 42DB1F502E71619900A15561 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
+		42DB1F532E71619900A15561 /* GoogleSignInSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 42DB1F502E71619900A15561 /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignInSwift;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

@@ -8,7 +8,6 @@
 import Foundation
 import SwiftUI
 import PhotosUI
-import FirebaseAuth
 
 class RegisterViewModel: ObservableObject {
     
@@ -24,29 +23,40 @@ class RegisterViewModel: ObservableObject {
     }
     
     @Published var errorMessage: String? = nil
+    @Published var showAlert: Bool = false
     @Published var isLoading: Bool = false
+    
+    private let firebaseManager: FirebaseManaging
+    
+    init(firebaseManager: FirebaseManaging = FirebaseManager.shared) {
+        self.firebaseManager = firebaseManager
+    }
+    
     
     private func setImage(from selection: PhotosPickerItem?) {
         guard let selection else { return }
         
         Task {
-            if let data = try? await selection.loadTransferable(type: Data.self) {
-                if let uiImage = UIImage(data: data) {
+            if let data = try? await selection.loadTransferable(type: Data.self),
+               let uiImage = UIImage(data: data) {
+                await MainActor.run {
                     self.userAvatar = uiImage
-                    return
                 }
             }
         }
     }
     
+    @MainActor
     func registerUser() async -> Bool {
         guard !email.isEmpty, !password.isEmpty, !confirmPassword.isEmpty else {
             errorMessage = "All fields are required."
+            showAlert = true
             return false
         }
         
         guard password == confirmPassword else {
             errorMessage = "Passwords do not match."
+            showAlert = true
             return false
         }
         
@@ -54,20 +64,19 @@ class RegisterViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            let result = try await Auth.auth().createUser(withEmail: email, password: password)
+            let result = try await firebaseManager.createUserWithEmail(email: email, password: password)
             print("User ID: \(result.user.uid)")
             isLoading = false
             return true
         } catch {
             isLoading = false
             errorMessage = error.localizedDescription
+            showAlert = true
             return false
         }
     }
-    
     
     func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }
-
