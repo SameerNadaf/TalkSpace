@@ -26,10 +26,10 @@ class RegisterViewModel: ObservableObject {
     @Published var showAlert: Bool = false
     @Published var isLoading: Bool = false
     
-    private let firebaseManager: FirebaseManaging
+    private let authService: AuthServicable
     
-    init(firebaseManager: FirebaseManaging = FirebaseManager.shared) {
-        self.firebaseManager = firebaseManager
+    init(authService: AuthServicable = AuthService()) {
+        self.authService = authService
     }
     
     
@@ -63,20 +63,23 @@ class RegisterViewModel: ObservableObject {
         isLoading = true
         errorMessage = nil
         
-        do {
-            let result = try await firebaseManager.createUserWithEmail(email: email, password: password)
-            print("User ID: \(result.user.uid)")
+        defer {
             isLoading = false
+        }
+        
+        do {
+            let imageData = userAvatar?.jpegData(compressionQuality: 0.8)
+            let result = try await authService.register(email: email, password: password, imageData: imageData)
+            
+            print("User ID: \(result.user.uid)")
             return true
         } catch {
             isLoading = false
             errorMessage = error.localizedDescription
+            print("Error: \(error.localizedDescription)")
             showAlert = true
             return false
         }
     }
-    
-    func hideKeyboard() {
-        UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-    }
+
 }

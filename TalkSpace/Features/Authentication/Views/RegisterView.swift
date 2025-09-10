@@ -15,43 +15,57 @@ struct RegisterView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    
-                    Text("Register")
-                        .font(.largeTitle)
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.top)
-                    
-                    userAvatarPicker
-                    
-                    IconTextField(systemImage: "at", placeholder: "Enter Email", text: $viewModel.email)
-                    IconTextField(systemImage: "lock", placeholder: "Enter Password", text: $viewModel.password, isSecure: true)
-                    IconTextField(systemImage: "lock", placeholder: "Confirm Password", text: $viewModel.confirmPassword)
-                    ActionButton(title: "Sign Up") {
-                        Task {
-                            let success = await viewModel.registerUser()
-                            if success {
-                                print("User registered successfully!")
+            ZStack {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        
+                        Text("Register")
+                            .font(.largeTitle)
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.top)
+                        
+                        userAvatarPicker
+                        
+                        IconTextField(systemImage: "at", placeholder: "Enter Email", text: $viewModel.email)
+                        IconTextField(systemImage: "lock", placeholder: "Enter Password", text: $viewModel.password, isSecure: true)
+                        IconTextField(systemImage: "lock", placeholder: "Confirm Password", text: $viewModel.confirmPassword)
+                        ActionButton(title: "Sign Up") {
+                            Task {
+                                let success = await viewModel.registerUser()
+                                if success {
+                                    print("User registered successfully!")
+                                }
                             }
                         }
-                    }
-                    OrDivider()
-                    GoogleButton(title: "Sign Up with Google") {
+                        OrDivider()
+                        GoogleButton(title: "Sign Up with Google") {
+                            
+                        }
+                        footerLink
+                            .padding(.top)
                         
                     }
-                    footerLink
-                        .padding(.top)
-                    
+                    .padding(.horizontal, 40)
+                    .frame(maxWidth: 500)
                 }
-                .padding(.horizontal, 40)
-                .frame(maxWidth: 500)
-            }
-            .onTapGesture {
-                KeyboardUtils.hideKeyboard()
+                .onTapGesture {
+                    KeyboardUtils.hideKeyboard()
+                }
+                
+                // ProgressView overlay
+                if viewModel.isLoading {
+                    Color.black.opacity(0.4)
+                        .edgesIgnoringSafeArea(.all)
+                    
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(1.5)
+                }
+                
             }
             .navigationBarBackButtonHidden(true)
+            
         }
         .alert("Heyy!!!", isPresented: $viewModel.showAlert) {
             Button("OK") {

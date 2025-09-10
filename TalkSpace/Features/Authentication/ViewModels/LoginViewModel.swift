@@ -15,10 +15,10 @@ final class LoginViewModel: ObservableObject {
     @Published var errorMessage: String? = nil
     @Published var showAlert: Bool = false
     
-    private let firebaseManager: FirebaseManaging
+    private let authService: AuthServicable
     
-    init(firebaseManager: FirebaseManaging = FirebaseManager.shared) {
-        self.firebaseManager = firebaseManager
+    init(authService: AuthServicable = AuthService()) {
+        self.authService = authService
     }
     
     @MainActor
@@ -33,7 +33,7 @@ final class LoginViewModel: ObservableObject {
         errorMessage = nil
         
         do {
-            let result = try await firebaseManager.signInWithEmail(email: email, password: password)
+            let result = try await authService.signIn(email: email, password: password)
             print("User logged in successfully: \(result.user.uid)")
             isLoading = false
             return true

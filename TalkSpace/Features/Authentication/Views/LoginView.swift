@@ -12,42 +12,54 @@ struct LoginView: View {
     
     var body: some View {
         NavigationStack {
-            ScrollView {
-                VStack(spacing: 20) {
-                    
-                    Image("logIn")
-                        .resizable()
-                        .scaledToFit()
-                    
-                    Text("LogIn")
-                        .font(.largeTitle)
-                        .bold()
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .padding(.bottom)
-                    
-                    IconTextField(systemImage: "at", placeholder: "Enter Email", text: $viewModel.email)
-                    IconTextField(systemImage: "lock", placeholder: "Enter Password", text: $viewModel.password, isSecure: true)
-                    ActionButton(title: "LogIn") {
-                        Task {
-                            let success = await viewModel.loginUser()
-                            if success {
-                                print("User logged in successfully")
+            ZStack {
+                ScrollView {
+                    VStack(spacing: 20) {
+                        
+                        Image("logIn")
+                            .resizable()
+                            .scaledToFit()
+                        
+                        Text("LogIn")
+                            .font(.largeTitle)
+                            .bold()
+                            .frame(maxWidth: .infinity, alignment: .leading)
+                            .padding(.bottom)
+                        
+                        IconTextField(systemImage: "at", placeholder: "Enter Email", text: $viewModel.email)
+                        IconTextField(systemImage: "lock", placeholder: "Enter Password", text: $viewModel.password, isSecure: true)
+                        ActionButton(title: "LogIn") {
+                            Task {
+                                let success = await viewModel.loginUser()
+                                if success {
+                                    print("User logged in successfully")
+                                }
                             }
                         }
-                    }
-                    OrDivider()
-                    GoogleButton(title: "Login with Google") {
+                        OrDivider()
+                        GoogleButton(title: "Login with Google") {
+                            
+                        }
+                        footerLink
+                            .padding(.top)
                         
                     }
-                    footerLink
-                        .padding(.top)
-                    
+                    .padding(.horizontal, 40)
+                    .frame(maxWidth: 500)
                 }
-                .padding(.horizontal, 40)
-                .frame(maxWidth: 500)
-            }
-            .onTapGesture {
-                KeyboardUtils.hideKeyboard()
+                .onTapGesture {
+                    KeyboardUtils.hideKeyboard()
+                }
+                
+                // ProgressView overlay
+                if viewModel.isLoading {
+                    Color.black.opacity(0.4)
+                        .edgesIgnoringSafeArea(.all)
+                    
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                        .scaleEffect(1.5)
+                }
             }
             .navigationBarBackButtonHidden(true)
         }
