@@ -57,7 +57,7 @@ struct HomeView: View {
             // Action Sheet
             .confirmationDialog("Settings", isPresented: $viewModel.showActionSheet, titleVisibility: .visible) {
                 Button("Edit Profile") {
-                    
+                    viewModel.openProfile = true
                 }
                 
                 Button("Log Out", role: .destructive) {
@@ -68,6 +68,10 @@ struct HomeView: View {
             
             .navigationDestination(isPresented: $viewModel.isLogOutTapped) {
                 LoginView()
+            }
+            
+            .sheet(isPresented: $viewModel.openProfile) {
+                ProfileView()
             }
         }
     }

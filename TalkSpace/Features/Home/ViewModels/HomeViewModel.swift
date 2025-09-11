@@ -12,6 +12,7 @@ final class HomeViewModel: ObservableObject {
     @Published var searchText: String = ""
     @Published var showActionSheet: Bool = false
     @Published var isLogOutTapped: Bool = false
+    @Published var openProfile: Bool = false
     
     private let homeService: HomeServicable
     

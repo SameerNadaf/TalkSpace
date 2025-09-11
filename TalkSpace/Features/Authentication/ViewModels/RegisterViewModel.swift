@@ -61,6 +61,12 @@ final class RegisterViewModel: ObservableObject {
             return false
         }
         
+        guard userAvatar != nil else {
+            errorMessage = "Please select a profile image."
+            showAlert = true
+            return false
+        }
+        
         isLoading = true
         errorMessage = nil
         

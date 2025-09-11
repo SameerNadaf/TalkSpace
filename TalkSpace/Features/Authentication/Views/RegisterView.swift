@@ -96,7 +96,7 @@ extension RegisterView {
                         .clipShape(Circle())
                         .overlay(
                             Circle()
-                                .stroke(Color.secondary, lineWidth: 4)
+                                .stroke(Color.primary, lineWidth: 4)
                         )
                         
                         
@@ -108,7 +108,7 @@ extension RegisterView {
                         .frame(width: 150, height: 150)
                         .overlay(
                             Circle()
-                                .stroke(Color.secondary, lineWidth: 4)
+                                .stroke(Color.primary, lineWidth: 4)
                         )
                 }
         }
