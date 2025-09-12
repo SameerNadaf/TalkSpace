@@ -23,11 +23,11 @@ Packages/
 # Firebase
 GoogleService-Info.plist
 
-# CocoaPods (if ever used in addition)
+# CocoaPods (if ever used)
 Pods/
 Podfile.lock
 
-# Carthage (if ever used in addition)
+# Carthage (if ever used)
 Carthage/Build/
 
 # Accio dependency manager
@@ -43,7 +43,7 @@ fastlane/test_output/
 # Xcode Server
 integration/
 
-# App archives
+# Archives
 *.xcarchive
 *.ipa
 *.dSYM.zip
@@ -53,7 +53,7 @@ integration/
 timeline.xctimeline
 playground.xcworkspace
 
-# User-specific files
+# User-specific
 *.swp
 *.lock
 *.DS_Store
@@ -62,10 +62,11 @@ playground.xcworkspace
 .env
 .env.*
 
-# Certificates and provisioning profiles
+# Certificates
 *.mobileprovision
 *.cer
 *.p12
 
 # Others
 *.hmap
+
