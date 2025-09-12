@@ -17,74 +17,26 @@ struct ProfileView: View {
         NavigationStack {
             ScrollView {
                 VStack(alignment: .leading, spacing: 20) {
-                    userAvatarPicker
+                    userAvatar
+                    imagePicker
                         .padding(.bottom)
                     
                     Button {
                         viewModel.showEditName = true
                     } label: {
-                        HStack {
-                            Image(systemName: "person.circle")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 30)
-                                .padding(.trailing)
-                            
-                            VStack(alignment: .leading) {
-                                Text("Name")
-                                    .font(.headline)
-                                
-                                Text("\(viewModel.userName)")
-                                    .font(.subheadline)
-                                    .foregroundStyle(.secondary)
-                            }
-                        }
-                        .frame(maxWidth: .infinity, alignment: .leading)
+                        ProfileDetailRow(iconName: "person.circle", title: "Name", value: "\(viewModel.userName)")
                     }
                     .foregroundStyle(.primary)
 
-                    
-                    HStack {
-                        Image(systemName: "mail")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 30)
-                            .padding(.trailing)
-                        
-                        VStack(alignment: .leading) {
-                            Text("Email")
-                                .font(.headline)
-                            
-                            Text("\(viewModel.email)")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    
-                    HStack {
-                        Image(systemName: "quote.bubble")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 30)
-                            .padding(.trailing)
-                        
-                        VStack(alignment: .leading) {
-                            Text("Quote")
-                                .font(.headline)
-                            
-                            Text("\(viewModel.quote)")
-                                .font(.subheadline)
-                                .foregroundStyle(.secondary)
-                        }
-                    }
-                    
+                    ProfileDetailRow(iconName: "envelope", title: "Email", value: "\(viewModel.email)")
+                    ProfileDetailRow(iconName: "quote.bubble", title: "Quote", value: "\(viewModel.quote)")
                 }
             }
             .frame(maxWidth: 400)
             .padding(.horizontal, 30)
            
             .sheet(isPresented: $viewModel.showEditName) {
-                EditNameView()
+                EditNameView(viewModel: viewModel)
                     .presentationDetents([.medium, .large])
             }
             
@@ -101,46 +53,49 @@ struct ProfileView: View {
                 
             }
         }
+        .task {
+            await viewModel.loadUserProfile()
+        }
     }
 }
 
 extension ProfileView {
     
-    private var userAvatarPicker: some View {
+    private var userAvatar: some View {
         VStack {
-            if let avatar = viewModel.userAvatar {
-                Image(uiImage: avatar)
-                    .resizable()
-                    .scaledToFill()
-                    .clipShape(Circle())
-                    .frame(width: 150, height: 150)
-                    .overlay(
-                        Circle()
-                            .stroke(Color.primary, lineWidth: 4)
-                    )
-                    .padding()
-            } else {
-                Image("user")
-                    .resizable()
-                    .scaledToFit()
-                    .clipShape(Circle())
-                    .frame(width: 150, height: 150)
-                    .overlay(
-                        Circle()
-                            .stroke(Color.primary, lineWidth: 4)
-                    )
-                    .padding()
+            ZStack {
+                RemoteImageView(
+                    urlString: viewModel.avatarURL?.absoluteString,
+                    size: 150
+                )
+                
+                if viewModel.isAvatarBeingUpdated {
+                    Color.black.opacity(0.4)
+                        .clipShape(Circle())
+                    
+                    ProgressView()
+                        .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                }
             }
-            
-            PhotosPicker(selection: $viewModel.selectionImage, matching: .images) {
-                Text("Edit")
-                    .font(.headline)
-            }
-            
+            .clipShape(Circle())
+            .frame(width: 150, height: 150)
+            .overlay(
+                Circle()
+                    .stroke(Color.primary, lineWidth: 4)
+            )
+            .padding()
         }
         .frame(maxWidth: .infinity)
-        
     }
+    
+    private var imagePicker: some View {
+        PhotosPicker(selection: $viewModel.selectionImage, matching: .images) {
+            Text("Edit")
+                .font(.headline)
+        }
+        .frame(maxWidth: .infinity)
+    }
+
 }
 
 #Preview {

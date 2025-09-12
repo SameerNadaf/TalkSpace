@@ -27,7 +27,7 @@ struct RegisterView: View {
                         
                         userAvatarPicker
                         
-                        IconTextField(systemImage: "at", placeholder: "Enter Email", text: $viewModel.email)
+                        IconTextField(systemImage: "envelope", placeholder: "Enter Email", text: $viewModel.email)
                         IconTextField(systemImage: "lock", placeholder: "Enter Password", text: $viewModel.password, isSecure: true)
                         IconTextField(systemImage: "lock", placeholder: "Confirm Password", text: $viewModel.confirmPassword)
                         ActionButton(title: "Sign Up") {

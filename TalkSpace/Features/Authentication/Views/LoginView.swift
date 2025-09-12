@@ -27,7 +27,7 @@ struct LoginView: View {
                             .frame(maxWidth: .infinity, alignment: .leading)
                             .padding(.bottom)
                         
-                        IconTextField(systemImage: "at", placeholder: "Enter Email", text: $viewModel.email)
+                        IconTextField(systemImage: "envelope", placeholder: "Enter Email", text: $viewModel.email)
                         IconTextField(systemImage: "lock", placeholder: "Enter Password", text: $viewModel.password, isSecure: true)
                         ActionButton(title: "LogIn") {
                             Task {

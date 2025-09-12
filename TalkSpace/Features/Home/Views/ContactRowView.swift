@@ -6,38 +6,49 @@
 //
 
 import SwiftUI
+import Firebase
 
 struct ContactRowView: View {
+    
+    let message: RecentMessage
+    @State private var currentDate = Date()
+    
     var body: some View {
         HStack(alignment: .top) {
-            Image("profile")
-                .resizable()
-                .scaledToFill()
-                .frame(width: 60, height: 60)
-                .clipShape(Circle())
-                .overlay {
-                    Circle()
-                        .stroke(Color.primary, lineWidth: 2)
-                }
-                .padding(.trailing, 6)
             
-            VStack(alignment: .leading) {
-                Text("Sameer Nadaf")
+            RemoteImageView(urlString: message.profileImageURL, size: 60)
+            
+            VStack(alignment: .leading, spacing: 4) {
+                Text(message.userName)
                     .font(.headline)
                 
-                Text("This is an example of a contact row with the name and a message which is multiline text and here it is limited to 2 lines")
+                Text(message.text)
                     .font(.subheadline)
                     .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                    .foregroundColor(.secondary)
             }
             
-            Text("12:34 AM")
+            Spacer()
+            
+            Text(message.timeAgo(relativeTo: currentDate))
                 .font(.subheadline)
-                .foregroundStyle(Color.accentColor)
+                .foregroundColor(.accentColor)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+        .onAppear {
+            startTimer()
+        }
+        
+    }
+    
+    private func startTimer() {
+        Timer.scheduledTimer(withTimeInterval: 60, repeats: true) { _ in
+            currentDate = Date()
+        }
     }
 }
 
 #Preview {
-    ContactRowView()
+//ContactRowView()
 }

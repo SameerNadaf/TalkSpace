@@ -6,25 +6,42 @@
 //
 
 import Foundation
+import Firebase
 import FirebaseAuth
 
 protocol HomeServicable {
     func signOut() throws
     func currentUser() -> User?
+    func listenForRecentMessages(completion: @escaping ([RecentMessage]) -> Void) -> ListenerRegistration?
+    func deleteRecentChat(message: RecentMessage) async throws
 }
 
 final class HomeService: HomeServicable {
-    private let firebaseManager: FirebaseManagable
     
-    init(firebaseManager: FirebaseManagable = FirebaseManager.shared) {
-        self.firebaseManager = firebaseManager
-    }
+    private let authManager = AuthManager.shared
+    private let chatManager = ChatManager.shared
     
     func signOut() throws {
-        try firebaseManager.signOut()
+        try authManager.signOut()
     }
     
     func currentUser() -> User? {
-        firebaseManager.currentUser()
+        authManager.currentUser
+    }
+    
+    func listenForRecentMessages(completion: @escaping ([RecentMessage]) -> Void) -> ListenerRegistration? {
+        guard let userId = authManager.currentUser?.uid else {
+            return nil
+        }
+        return chatManager.listenForRecentMessages(userId: userId, completion: completion)
+    }
+    
+    func deleteRecentChat(message: RecentMessage) async throws {
+        guard let currentUserId = authManager.currentUser?.uid else {
+            throw NSError(domain: "HomeService", code: -1, userInfo: [NSLocalizedDescriptionKey: "User not logged in"])
+        }
+        
+        try await chatManager.deleteRecentChat(userId: currentUserId, messageId: message.id)
     }
 }
+

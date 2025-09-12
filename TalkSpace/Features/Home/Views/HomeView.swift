@@ -10,15 +10,31 @@ import SwiftUI
 struct HomeView: View {
     
     @StateObject private var viewModel = HomeViewModel()
+    @State private var pressedMessage: RecentMessage? = nil
     
     var body: some View {
         NavigationStack(path: $viewModel.path) {
             List {
-                ForEach(0..<20, id: \.self) { index in
-                    ContactRowView()
-                        .contentShape(Rectangle()) // Makes entire row tappable
+                ForEach(viewModel.recentMessages) { message in
+                    ContactRowView(message: message)
+                        .contentShape(Rectangle())
+                        .scaleEffect(pressedMessage == message ? 0.95 : 1.0)
+                        .opacity(pressedMessage == message ? 0.7 : 1.0)
+                        .animation(.easeInOut(duration: 0.2), value: pressedMessage)
                         .onTapGesture {
-                            viewModel.path.append(index)
+                            viewModel.path.append(message)
+                        }
+                        .onLongPressGesture(minimumDuration: 0.5, pressing: { isPressing in
+                            withAnimation {
+                                pressedMessage = isPressing ? message : nil
+                            }
+                        }, perform: {
+                            viewModel.selectedMessage = message
+                            viewModel.showDeleteAlert = true
+                            pressedMessage = nil
+                        })
+                        .onAppear {
+                            viewModel.resetSearch()
                         }
                         .listRowSeparator(.hidden)
                 }
@@ -26,18 +42,41 @@ struct HomeView: View {
             .scrollIndicators(.hidden)
             .listStyle(.plain)
             .searchable(text: $viewModel.searchText, placement: .automatic, prompt: Text("Search"))
-            
-            .navigationDestination(for: Int.self) { index in
-                Text("Hello, World for row \(index)")
+            .onChange(of: viewModel.searchText) {
+                viewModel.applySearch()
             }
             
+            .alert("Delete Chat?", isPresented: $viewModel.showDeleteAlert , presenting: viewModel.selectedMessage) { message in
+                Button("DELETE", role: .destructive) {
+                    Task {
+                        if let msg = viewModel.selectedMessage {
+                            await viewModel.deleteRecentChat(msg)
+                        }
+                    }
+
+                }
+                
+                Button("CANCEL", role: .cancel) { }
+                
+            } message: { message in
+                Text("Are you sure you want to delete your chat with \(message.userName)?")
+            }
+            
+            .navigationDestination(for: RecentMessage.self) { message in
+                ChatView(chatUser: ChatUser(
+                    id: message.toId == AuthManager.shared.currentUser?.uid ? message.fromId : message.toId,
+                    userName: message.userName,
+                    email: "", // or fetch if needed
+                    profileImageURL: message.profileImageURL
+                ))
+            }
             .navigationTitle("TalkSpace")
             .navigationBarTitleDisplayMode(.large)
             .navigationBarBackButtonHidden(true)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        
+                        viewModel.openNewChat.toggle()
                     } label: {
                         Image(systemName: "square.and.pencil")
                     }
@@ -49,12 +88,8 @@ struct HomeView: View {
                     } label: {
                         Image(systemName: "gear")
                     }
-
                 }
-                
             }
-            
-            // Action Sheet
             .confirmationDialog("Settings", isPresented: $viewModel.showActionSheet, titleVisibility: .visible) {
                 Button("Edit Profile") {
                     viewModel.openProfile = true
@@ -65,14 +100,21 @@ struct HomeView: View {
                     viewModel.isLogOutTapped = true
                 }
             }
-            
+            .fullScreenCover(isPresented: $viewModel.openNewChat) {
+                NewChatView()
+            }
             .navigationDestination(isPresented: $viewModel.isLogOutTapped) {
                 LoginView()
             }
-            
             .sheet(isPresented: $viewModel.openProfile) {
                 ProfileView()
             }
+        }
+        .task {
+            viewModel.startListening()
+        }
+        .onDisappear {
+            viewModel.stopListening()
         }
     }
 }
@@ -80,3 +122,4 @@ struct HomeView: View {
 #Preview {
     HomeView()
 }
+
