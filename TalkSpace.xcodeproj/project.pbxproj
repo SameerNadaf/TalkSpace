@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		428BEBF42E72B2D5008B9B45 /* SDWebImageSwiftUI in Frameworks */ = {isa = PBXBuildFile; productRef = 428BEBF32E72B2D5008B9B45 /* SDWebImageSwiftUI */; };
+		428BEC202E749CF7008B9B45 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = 428BEC1F2E749CF1008B9B45 /* .gitignore */; };
 		42DB1F492E7154DB00A15561 /* FirebaseAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 42DB1F482E7154DB00A15561 /* FirebaseAuth */; };
 		42DB1F4B2E7154DB00A15561 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 42DB1F4A2E7154DB00A15561 /* FirebaseFirestore */; };
 		42DB1F4D2E7154DB00A15561 /* FirebaseStorage in Frameworks */ = {isa = PBXBuildFile; productRef = 42DB1F4C2E7154DB00A15561 /* FirebaseStorage */; };
@@ -33,6 +34,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		428BEC1F2E749CF1008B9B45 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
 		428F63542E706A5100586B58 /* TalkSpace.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TalkSpace.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		428F63612E706A5300586B58 /* TalkSpaceTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TalkSpaceTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		428F636B2E706A5300586B58 /* TalkSpaceUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TalkSpaceUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -90,6 +92,7 @@
 		428F634B2E706A5100586B58 = {
 			isa = PBXGroup;
 			children = (
+				428BEC1F2E749CF1008B9B45 /* .gitignore */,
 				428F63562E706A5100586B58 /* TalkSpace */,
 				428F63642E706A5300586B58 /* TalkSpaceTests */,
 				428F636E2E706A5300586B58 /* TalkSpaceUITests */,
@@ -238,6 +241,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				428BEC202E749CF7008B9B45 /* .gitignore in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
