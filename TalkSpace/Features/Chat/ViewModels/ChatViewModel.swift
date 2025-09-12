@@ -11,7 +11,7 @@ import SwiftUI
 
 final class ChatViewModel: ObservableObject {
     @Published var messageText: String = ""
-    @Published var textHeight: CGFloat = 35
+    @Published var textHeight: CGFloat = 40
     @Published var messages: [Message] = []
     
     let chatUser: ChatUser?

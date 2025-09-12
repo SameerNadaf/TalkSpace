@@ -91,10 +91,10 @@ extension ChatView {
     private var messageInputView: some View {
         HStack {
             TextEditor(text: $viewModel.messageText)
-                .frame(height: min(max(viewModel.textHeight, 35), 80))
+                .frame(height: min(max(viewModel.textHeight, 40), 80))
                 .padding(8)
                 .background(Color(UIColor.systemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .clipShape(RoundedRectangle(cornerRadius: 30))
                 .animation(.easeInOut(duration: 0.2), value: viewModel.textHeight)
                 .onChange(of: viewModel.messageText) {
                     viewModel.calculateTextHeight()
@@ -107,11 +107,11 @@ extension ChatView {
                         await viewModel.sendMessage()
                     }
                 } label: {
-                    Image(systemName: "paperplane.fill")
+                    Image(systemName: "arrow.up.circle.fill")
                         .resizable()
                         .scaledToFit()
-                        .frame(width: 24, height: 24)
-                        .padding(8)
+                        .frame(width: 30, height: 30)
+                        
                 }
                 .transition(.scale.combined(with: .opacity))
                 .animation(.easeInOut(duration: 0.2), value: viewModel.messageText)
@@ -120,11 +120,12 @@ extension ChatView {
             Button {
                 print("Upload image tapped")
             } label: {
-                Image(systemName: "camera")
+                Image(systemName: "camera.fill")
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 24, height: 24)
-                    .padding(8)
+                    .frame(width: 30, height: 30)
+                    .padding(.leading, 8)
+                    
             }
         }
         .animation(.easeInOut(duration: 0.2), value: viewModel.messageText)
