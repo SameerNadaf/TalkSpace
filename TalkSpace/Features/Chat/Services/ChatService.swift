@@ -10,9 +10,10 @@ import Firebase
 
 protocol ChatServicable {
     func fetchAllUsers(excluding userId: String) async -> [ChatUser]
-    func sendMessage(fromId: String, toId: String, text: String) async throws
+    func sendMessage(fromId: String, toId: String, text: String, imageURL: String?) async throws
     func listenForMessages(fromId: String, toId: String, completion: @escaping (Result<[Message], Error>) -> Void) -> ListenerRegistration
     func persistRecentMessage(fromId: String, toId: String, text: String, profileImageUrl: String, userName: String, currentUserName: String, currentUserProfileImageURL: String) async throws
+    func uploadChatImage(fromId: String, toId: String, image: UIImage) async throws -> URL
 
 }
 
@@ -20,6 +21,7 @@ final class ChatService: ChatServicable {
     
     private let userManager = UserManager.shared
     private let chatManager = ChatManager.shared
+    private let storageManager = StorageManager.shared
     
     func fetchAllUsers(excluding userId: String) async -> [ChatUser] {
         do {
@@ -40,13 +42,16 @@ final class ChatService: ChatServicable {
         }
     }
     
-    func sendMessage(fromId: String, toId: String, text: String) async throws {
-        let messageData: [String: Any] = [
+    func sendMessage(fromId: String, toId: String, text: String, imageURL: String? = nil) async throws {
+        var messageData: [String: Any] = [
             "text": text,
             "fromId": fromId,
             "toId": toId,
             "timestamp": Timestamp()
         ]
+        if let imageURL {
+            messageData["imageURL"] = imageURL
+        }
         try await chatManager.sendMessage(fromId: fromId, toId: toId, messageData: messageData)
     }
     
@@ -85,12 +90,15 @@ final class ChatService: ChatServicable {
                           let timestamp = data["timestamp"] as? Timestamp else {
                         return nil
                     }
+                    
+                    let imageURL = data["imageURL"] as? String
                     return Message(
                         id: UUID().uuidString,
                         text: text,
                         fromId: fromId,
                         toId: toId,
-                        timestamp: timestamp.dateValue()
+                        timestamp: timestamp.dateValue(),
+                        imageURL: imageURL
                     )
                 }
                 completion(.success(messages))
@@ -100,4 +108,9 @@ final class ChatService: ChatServicable {
             }
         }
     }
+    
+    func uploadChatImage(fromId: String, toId: String, image: UIImage) async throws -> URL {
+        try await storageManager.uploadChatImage(fromId: fromId, toId: toId, image: image)
+    }
+    
 }

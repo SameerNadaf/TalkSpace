@@ -8,23 +8,47 @@
 import Foundation
 import Firebase
 import SwiftUI
+import PhotosUI
+import Combine
 
 final class ChatViewModel: ObservableObject {
     @Published var messageText: String = ""
     @Published var textHeight: CGFloat = 40
+    @Published var isUploadingImage: Bool = false
     @Published var messages: [Message] = []
+    
+    @Published var photoPickerItem: PhotosPickerItem? = nil
+    @Published var selectedImage: UIImage? = nil
+    private var cancellables = Set<AnyCancellable>()
     
     let chatUser: ChatUser?
     
     private let chatService: ChatServicable
     private let authManager = AuthManager.shared
     private let userManager = UserManager.shared
+    
     private var listener: ListenerRegistration?
     
-    init(chatUser: ChatUser?,
-         chatService: ChatServicable = ChatService()) {
+    init(chatUser: ChatUser?, chatService: ChatServicable = ChatService()) {
         self.chatUser = chatUser
         self.chatService = chatService
+        
+        photoSubscriber()
+    }
+    
+    func photoSubscriber() {
+        $photoPickerItem
+            .compactMap { $0 }
+            .sink { [weak self] item in
+                guard let self else { return }
+                Task { @MainActor in
+                    if let data = try? await item.loadTransferable(type: Data.self),
+                       let image = UIImage(data: data) {
+                        self.selectedImage = image
+                    }
+                }
+            }
+            .store(in: &cancellables)
     }
     
     func format(date: Date) -> String {
@@ -38,21 +62,40 @@ final class ChatViewModel: ObservableObject {
               let toId = chatUser?.id else { return }
         
         let trimmedText = messageText.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmedText.isEmpty else { return }
+        guard !trimmedText.isEmpty || selectedImage != nil else { return }
+        
+        await MainActor.run { isUploadingImage = true }
         
         do {
-            try await chatService.sendMessage(fromId: fromId, toId: toId, text: trimmedText)
-            await persistRecentMessage(trimmedText: trimmedText)
+            var imageURLString: String? = nil
+            
+            if let image = selectedImage {
+                let uploadedURL = try await chatService.uploadChatImage(fromId: fromId, toId: toId, image: image)
+                imageURLString = uploadedURL.absoluteString
+                await MainActor.run {
+                    isUploadingImage = false
+                }
+            }
+            
+            let messageToSend = trimmedText.isEmpty ? "[Image]" : trimmedText
+            try await chatService.sendMessage(fromId: fromId, toId: toId, text: messageToSend, imageURL: imageURLString)
+            
+            await persistRecentMessage(trimmedText: messageToSend)
+        
             await MainActor.run {
-                withAnimation(.easeOut) {
+                withAnimation {
+                    selectedImage = nil
                     messageText = ""
                 }
             }
+            
             print("Message sent successfully!")
+            
         } catch {
             print("Error sending message: \(error.localizedDescription)")
         }
     }
+
 
     func persistRecentMessage(trimmedText: String) async {
         guard let fromId = authManager.currentUser?.uid,

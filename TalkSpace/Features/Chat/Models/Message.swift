@@ -13,4 +13,5 @@ struct Message: Identifiable {
     let fromId: String
     let toId: String
     let timestamp: Date
+    let imageURL: String? 
 }

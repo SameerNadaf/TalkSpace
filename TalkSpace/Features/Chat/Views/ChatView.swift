@@ -7,6 +7,7 @@
 
 import SwiftUI
 import FirebaseAuth
+import PhotosUI
 
 struct ChatView: View {
     
@@ -31,9 +32,11 @@ struct ChatView: View {
                             ChatMessageRow(
                                 isCurrentUser: message.fromId == AuthManager.shared.currentUser?.uid,
                                 message: message.text,
+                                imageURL: message.imageURL,
                                 time: viewModel.format(date: message.timestamp)
                             )
-                            .id(message.id) // For scroll-to-bottom
+                            .id(message.id)
+                            // For scroll-to-bottom
                         }
                     }
                     .padding()
@@ -89,46 +92,88 @@ struct ChatView: View {
 
 extension ChatView {
     private var messageInputView: some View {
-        HStack {
-            TextEditor(text: $viewModel.messageText)
-                .frame(height: min(max(viewModel.textHeight, 40), 80))
-                .padding(8)
-                .background(Color(UIColor.systemBackground))
-                .clipShape(RoundedRectangle(cornerRadius: 30))
-                .animation(.easeInOut(duration: 0.2), value: viewModel.textHeight)
-                .onChange(of: viewModel.messageText) {
-                    viewModel.calculateTextHeight()
-                }
-                .focused($isTextEditorFocused)
-            
-            if !viewModel.messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
-                Button {
-                    Task {
-                        await viewModel.sendMessage()
+        VStack(spacing: 8) {
+            // 1. Preview of selected image (if any)
+            if let selectedImage = viewModel.selectedImage {
+                ZStack(alignment: .center) {
+                    Image(uiImage: selectedImage)
+                        .resizable()
+                        .scaledToFit()
+                        .frame(maxWidth: .infinity)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+
+                    if viewModel.isUploadingImage {
+                        Color.black.opacity(0.25)
+                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                        
+                        ProgressView()
+                            .progressViewStyle(CircularProgressViewStyle(tint: .white))
+                            .scaleEffect(1.5)
                     }
-                } label: {
-                    Image(systemName: "arrow.up.circle.fill")
+
+                    VStack {
+                        HStack {
+                            Spacer()
+                            Button(action: { viewModel.selectedImage = nil }) {
+                                Image(systemName: "xmark.circle.fill")
+                                    .foregroundColor(.red)
+                                    .font(.title)
+                                    .background(.thickMaterial)
+                                    .clipShape(Circle())
+                            }
+                            .padding()
+                        }
+                        Spacer()
+                    }
+                }
+            }
+
+            
+            // 2. Input area
+            HStack {
+                TextEditor(text: $viewModel.messageText)
+                    .frame(height: min(max(viewModel.textHeight, 40), 80))
+                    .padding(8)
+                    .background(Color(UIColor.systemBackground))
+                    .font(.system(size: 17))
+                    .clipShape(RoundedRectangle(cornerRadius: 30))
+                    .onChange(of: viewModel.messageText) {
+                        viewModel.calculateTextHeight()
+                    }
+                    .focused($isTextEditorFocused)
+                
+                // Send button
+                if !viewModel.messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.selectedImage != nil {
+                    Button {
+                        Task {
+                            await viewModel.sendMessage()
+                        }
+                    } label: {
+                        Image(systemName: "arrow.up.circle.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: 30, height: 30)
+                    }
+                    .transition(.scale.combined(with: .opacity))
+                }
+                
+                // PhotosPicker button
+                PhotosPicker(
+                    selection: $viewModel.photoPickerItem,
+                    matching: .images,
+                    photoLibrary: .shared()
+                ) {
+                    Image(systemName: "camera.fill")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 30, height: 30)
-                        
                 }
-                .transition(.scale.combined(with: .opacity))
-                .animation(.easeInOut(duration: 0.2), value: viewModel.messageText)
+                
             }
-            
-            Button {
-                print("Upload image tapped")
-            } label: {
-                Image(systemName: "camera.fill")
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: 30, height: 30)
-                    .padding(.leading, 8)
-                    
-            }
+            .padding(.horizontal, 4)
+            .padding(.vertical, 4)
         }
-        .animation(.easeInOut(duration: 0.2), value: viewModel.messageText)
+        .animation(.smooth, value: viewModel.selectedImage)
     }
 }
 

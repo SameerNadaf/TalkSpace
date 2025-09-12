@@ -26,6 +26,7 @@ struct RemoteImageView: View {
             if let urlString, let url = URL(string: urlString) {
                 WebImage(url: url)
                     .resizable()
+                    .indicator(.activity)
                     .scaledToFill()
             } else {
                 Image(placeholder)
