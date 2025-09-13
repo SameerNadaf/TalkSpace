@@ -30,24 +30,5 @@ struct RecentMessage: Identifiable, Hashable {
             self.timestamp = Date()
         }
     }
-    
-//    func timeAgo(relativeTo date: Date) -> String {
-//        let formatter = RelativeDateTimeFormatter()
-//        formatter.unitsStyle = .abbreviated
-//        return formatter.localizedString(for: timestamp, relativeTo: date)
-//    }
-    
-    func timeAgo(relativeTo date: Date) -> String {
-        let elapsed = date.timeIntervalSince(timestamp)
-        
-        if elapsed < 60 {
-            return "Now"
-        } else {
-            let formatter = RelativeDateTimeFormatter()
-            formatter.unitsStyle = .abbreviated
-            return formatter.localizedString(for: timestamp, relativeTo: date)
-        }
-    }
-
 
 }

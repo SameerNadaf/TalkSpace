@@ -50,13 +50,7 @@ final class ChatViewModel: ObservableObject {
             }
             .store(in: &cancellables)
     }
-    
-    func format(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "h:mm a"
-        return formatter.string(from: date)
-    }
-    
+
     func sendMessage() async {
         guard let fromId = authManager.currentUser?.uid,
               let toId = chatUser?.id else { return }

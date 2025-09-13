@@ -37,7 +37,7 @@ struct ChatView: View {
                                         isCurrentUser: message.fromId == AuthManager.shared.currentUser?.uid,
                                         message: message.text,
                                         imageURL: message.imageURL,
-                                        time: viewModel.format(date: message.timestamp)
+                                        time: message.timestamp.formattedTime()
                                     )
                                     .id(message.id)
                                     // For scroll-to-bottom
@@ -79,7 +79,7 @@ struct ChatView: View {
             ToolbarItem(placement: .topBarLeading) {
                 HStack(spacing: 10) {
                     if let urlString = chatUser.profileImageURL {
-                        RemoteImageView(urlString: urlString, size: 32)
+                        ProfileImageView(urlString: urlString, size: 32)
                     }
                     Text(chatUser.userName)
                         .font(.headline)

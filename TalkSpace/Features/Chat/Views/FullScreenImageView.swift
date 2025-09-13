@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SDWebImageSwiftUI
 
 struct FullScreenImageView: View {
     let imageURL: String
@@ -18,10 +17,7 @@ struct FullScreenImageView: View {
                 .edgesIgnoringSafeArea(.all)
                 .opacity(0.8)
             
-            WebImage(url: URL(string: imageURL))
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(maxWidth: .infinity, maxHeight: .infinity)
+            CustomWebImage(imageURL: imageURL, contentMode: .fit, width: .infinity, height: .infinity)
                 .background(Color.black)
                 .edgesIgnoringSafeArea(.all)
                 .onTapGesture {

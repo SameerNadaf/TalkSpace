@@ -1,14 +1,14 @@
 //
-//  RemoteImageView.swift
+//  ProfileImageView.swift
 //  TalkSpace
 //
-//  Created by Sameer  on 11/09/25.
+//  Created by Sameer  on 13/09/25.
 //
 
 import SwiftUI
 import SDWebImageSwiftUI
 
-struct RemoteImageView: View {
+struct ProfileImageView: View {
     let urlString: String?
     let placeholder: String
     let size: CGFloat
@@ -40,7 +40,6 @@ struct RemoteImageView: View {
     }
 }
 
-
 #Preview {
-    RemoteImageView(urlString: "https://picsum.photos/50")
+    ProfileImageView(urlString: "https://picsum.photos/50")
 }

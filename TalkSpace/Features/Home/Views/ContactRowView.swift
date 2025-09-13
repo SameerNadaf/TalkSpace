@@ -16,7 +16,7 @@ struct ContactRowView: View {
     var body: some View {
         HStack(alignment: .top) {
             
-            RemoteImageView(urlString: message.profileImageURL, size: 60)
+            ProfileImageView(urlString: message.profileImageURL, size: 60)
             
             VStack(alignment: .leading, spacing: 4) {
                 Text(message.userName)
@@ -31,7 +31,7 @@ struct ContactRowView: View {
             
             Spacer()
             
-            Text(message.timeAgo(relativeTo: currentDate))
+            Text(message.timestamp.timeAgo())
                 .font(.subheadline)
                 .foregroundColor(.accentColor)
         }

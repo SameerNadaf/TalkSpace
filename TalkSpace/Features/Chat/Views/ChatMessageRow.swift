@@ -23,8 +23,7 @@ struct ChatMessageRow: View {
             VStack(alignment: isCurrentUser ? .trailing : .leading, spacing: 4) {
                 
                 VStack {
-                    if let imageURL {
-                        WebImage(url: URL(string: imageURL))
+                    if let imageURL {                        WebImage(url: URL(string: imageURL))
                             .resizable()
                             .indicator(.activity)
                             .aspectRatio(contentMode: .fill)

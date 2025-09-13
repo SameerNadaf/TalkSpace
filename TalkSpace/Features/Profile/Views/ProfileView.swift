@@ -64,7 +64,7 @@ extension ProfileView {
     private var userAvatar: some View {
         VStack {
             ZStack {
-                RemoteImageView(
+                ProfileImageView(
                     urlString: viewModel.avatarURL?.absoluteString,
                     size: 150
                 )

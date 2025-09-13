@@ -13,7 +13,7 @@ struct NewContactRow: View {
     var body: some View {
         HStack(spacing: 20) {
             if let urlString = user.profileImageURL {
-                RemoteImageView(
+                ProfileImageView(
                     urlString: urlString,
                     size: 50
                 )
@@ -33,6 +33,6 @@ struct NewContactRow: View {
 
 
 #Preview {
-    let user = ChatUser(id: "1", userName: "Sameer", email: "sameer@gmail.com", profileImageURL: "https://via.placeholder.com/150")
+    let user = ChatUser(id: "1", userName: "Sameer", email: "sameer@gmail.com", profileImageURL: "https://picsum.photos/400")
     NewContactRow(user: user)
 }
