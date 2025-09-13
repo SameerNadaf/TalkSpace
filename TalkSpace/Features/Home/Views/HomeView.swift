@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Lottie
 
 struct HomeView: View {
     
@@ -15,30 +16,36 @@ struct HomeView: View {
     var body: some View {
         NavigationStack(path: $viewModel.path) {
             List {
-                ForEach(viewModel.recentMessages) { message in
-                    ContactRowView(message: message)
-                        .contentShape(Rectangle())
-                        .scaleEffect(pressedMessage == message ? 0.95 : 1.0)
-                        .opacity(pressedMessage == message ? 0.7 : 1.0)
-                        .animation(.easeInOut(duration: 0.2), value: pressedMessage)
-                        .onTapGesture {
-                            viewModel.path.append(message)
-                        }
-                        .onLongPressGesture(minimumDuration: 0.5, pressing: { isPressing in
-                            withAnimation {
-                                pressedMessage = isPressing ? message : nil
-                            }
-                        }, perform: {
-                            viewModel.selectedMessage = message
-                            viewModel.showDeleteAlert = true
-                            pressedMessage = nil
-                        })
-                        .onAppear {
-                            viewModel.resetSearch()
-                        }
+                if viewModel.recentMessages.isEmpty {
+                    EmptyStateView(fileName: "SearchEmpty.json", title: "No Recent Messages", subtitle: "Start a new conversation by tapping the pencil icon.")
                         .listRowSeparator(.hidden)
+                } else {
+                    ForEach(viewModel.recentMessages) { message in
+                        ContactRowView(message: message)
+                            .contentShape(Rectangle())
+                            .scaleEffect(pressedMessage == message ? 0.95 : 1.0)
+                            .opacity(pressedMessage == message ? 0.7 : 1.0)
+                            .animation(.easeInOut(duration: 0.2), value: pressedMessage)
+                            .onTapGesture {
+                                viewModel.path.append(message)
+                            }
+                            .onLongPressGesture(minimumDuration: 0.5, pressing: { isPressing in
+                                withAnimation {
+                                    pressedMessage = isPressing ? message : nil
+                                }
+                            }, perform: {
+                                viewModel.selectedMessage = message
+                                viewModel.showDeleteAlert = true
+                                pressedMessage = nil
+                            })
+                            .onAppear {
+                                viewModel.resetSearch()
+                            }
+                            .listRowSeparator(.hidden)
+                    }
                 }
             }
+
             .scrollIndicators(.hidden)
             .listStyle(.plain)
             .searchable(text: $viewModel.searchText, placement: .automatic, prompt: Text("Search"))

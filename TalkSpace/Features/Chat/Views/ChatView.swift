@@ -27,20 +27,25 @@ struct ChatView: View {
             // Chat messages area
             ScrollViewReader { proxy in
                 ScrollView {
-                    VStack(spacing: 12) {
-                        ForEach(viewModel.messages) { message in
-                            ChatMessageRow(
-                                isCurrentUser: message.fromId == AuthManager.shared.currentUser?.uid,
-                                message: message.text,
-                                imageURL: message.imageURL,
-                                time: viewModel.format(date: message.timestamp)
-                            )
-                            .id(message.id)
-                            // For scroll-to-bottom
-                        }
+                    if viewModel.messages.isEmpty {
+                        EmptyStateView(fileName: "SearchMessages.json", title: "Looks quiet here", subtitle: "Send a message and get the conversation going!")
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    } else {
+                            VStack(spacing: 12) {
+                                ForEach(viewModel.messages) { message in
+                                    ChatMessageRow(
+                                        isCurrentUser: message.fromId == AuthManager.shared.currentUser?.uid,
+                                        message: message.text,
+                                        imageURL: message.imageURL,
+                                        time: viewModel.format(date: message.timestamp)
+                                    )
+                                    .id(message.id)
+                                    // For scroll-to-bottom
+                                }
+                            }
+                            .padding()
                     }
-                    .padding()
-                    
+
                 }
                 .onTapGesture {
                     isTextEditorFocused = false
@@ -58,6 +63,7 @@ struct ChatView: View {
                 .padding(.horizontal)
                 .padding(.vertical, 8)
                 .background(Color(UIColor.secondarySystemBackground))
+                            
         }
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden(true)
@@ -142,7 +148,6 @@ extension ChatView {
                     }
                     .focused($isTextEditorFocused)
                 
-                // Send button
                 if !viewModel.messageText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.selectedImage != nil {
                     Button {
                         Task {
@@ -157,7 +162,6 @@ extension ChatView {
                     .transition(.scale.combined(with: .opacity))
                 }
                 
-                // PhotosPicker button
                 PhotosPicker(
                     selection: $viewModel.photoPickerItem,
                     matching: .images,

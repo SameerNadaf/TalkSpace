@@ -16,16 +16,20 @@ struct NewChatView: View {
         NavigationStack {
             ScrollView {
                 LazyVStack {
-                    ForEach(viewModel.users) { user in
-                        NavigationLink {
-                            ChatView(chatUser: user)
-                                .onAppear {
-                                    viewModel.resetSearch()
-                                }
-                        } label: {
-                            NewContactRow(user: user)
-                                .foregroundStyle(Color.primary)
-                                .padding(.top, 6)
+                    if viewModel.users.isEmpty {
+                        EmptyStateView(fileName: "SearchEmpty.json", title: "No Contacts Found", subtitle: "The search did not match any contacts")
+                    } else {
+                        ForEach(viewModel.users) { user in
+                            NavigationLink {
+                                ChatView(chatUser: user)
+                                    .onAppear {
+                                        viewModel.resetSearch()
+                                    }
+                            } label: {
+                                NewContactRow(user: user)
+                                    .foregroundStyle(Color.primary)
+                                    .padding(.top, 6)
+                            }
                         }
                     }
                 }

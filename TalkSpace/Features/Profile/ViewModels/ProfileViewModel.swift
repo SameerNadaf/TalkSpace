@@ -13,7 +13,7 @@ final class ProfileViewModel: ObservableObject {
     
     @Published var userName: String = ""
     @Published var email: String = ""
-    @Published var quote: String = "Build something beautiful."
+    @Published var bio: String = "Busy building something new..."
     
     @Published var showEditName: Bool = false
     @Published var name: String = "" {

@@ -101,7 +101,7 @@ extension RegisterView {
                         
                         
                 } else {
-                    Image("user")
+                    Image("profile")
                         .resizable()
                         .scaledToFit()
                         .clipShape(Circle())

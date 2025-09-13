@@ -17,9 +17,10 @@ struct LoginView: View {
                 ScrollView {
                     VStack(spacing: 20) {
                         
-                        Image("logIn")
+                        Image("Login")
                             .resizable()
                             .scaledToFit()
+                            .frame(height: UIScreen.main.bounds.height / 3.2)
                         
                         Text("LogIn")
                             .font(.largeTitle)
@@ -77,7 +78,6 @@ struct LoginView: View {
                 Text(msg)
             }
         }
-
     }
 }
 

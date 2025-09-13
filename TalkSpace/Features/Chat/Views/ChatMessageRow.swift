@@ -14,6 +14,8 @@ struct ChatMessageRow: View {
     let imageURL: String?
     let time: String
     
+    @State private var isImageFullScreen = false
+    
     var body: some View {
         HStack {
             if isCurrentUser { Spacer() }
@@ -29,6 +31,9 @@ struct ChatMessageRow: View {
                             .frame(width: 250, height: 250)
                             .clipped()
                             .clipShape(RoundedRectangle(cornerRadius: 12))
+                            .onTapGesture {
+                                isImageFullScreen = true
+                            }
                     }
                     if !message.isEmpty && message != "[Image]"{
                         Text(message)
@@ -49,6 +54,10 @@ struct ChatMessageRow: View {
             if !isCurrentUser { Spacer() }
         }
         .padding(.horizontal, 8)
+        
+        .fullScreenCover(isPresented: $isImageFullScreen) {
+            FullScreenImageView(imageURL: imageURL ?? "", isPresented: $isImageFullScreen)
+        }
     }
 }
 

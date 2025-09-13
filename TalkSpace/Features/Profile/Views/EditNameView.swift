@@ -69,7 +69,7 @@ struct EditNameView: View {
                     Color.black.opacity(0.4)
                         .ignoresSafeArea()
                     
-                    ProgressView("Loading...")
+                    ProgressView()
                 }
             }
         }

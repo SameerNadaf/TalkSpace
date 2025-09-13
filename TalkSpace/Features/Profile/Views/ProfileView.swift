@@ -24,12 +24,12 @@ struct ProfileView: View {
                     Button {
                         viewModel.showEditName = true
                     } label: {
-                        ProfileDetailRow(iconName: "person.circle", title: "Name", value: "\(viewModel.userName)")
+                        ProfileDetailRow(iconName: "person.crop.circle", title: "Name", value: "\(viewModel.userName)")
                     }
                     .foregroundStyle(.primary)
 
                     ProfileDetailRow(iconName: "envelope", title: "Email", value: "\(viewModel.email)")
-                    ProfileDetailRow(iconName: "quote.bubble", title: "Quote", value: "\(viewModel.quote)")
+                    ProfileDetailRow(iconName: "info.circle", title: "About Me", value: "\(viewModel.bio)")
                 }
             }
             .frame(maxWidth: 400)
