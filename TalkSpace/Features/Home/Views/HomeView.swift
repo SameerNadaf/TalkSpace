@@ -12,13 +12,16 @@ struct HomeView: View {
     
     @StateObject private var viewModel = HomeViewModel()
     @State private var pressedMessage: RecentMessage? = nil
+    @State private var showEmptyState = false
     
     var body: some View {
         NavigationStack(path: $viewModel.path) {
             List {
                 if viewModel.recentMessages.isEmpty {
-                    EmptyStateView(fileName: "SearchEmpty.json", title: "No Recent Messages", subtitle: "Start a new conversation by tapping the pencil icon.")
-                        .listRowSeparator(.hidden)
+                    if showEmptyState {
+                        EmptyStateView(fileName: "SearchEmpty.json", title: "No Recent Messages", subtitle: "Start a new conversation by tapping the pencil icon.")
+                            .listRowSeparator(.hidden)
+                    }
                 } else {
                     ForEach(viewModel.recentMessages) { message in
                         ContactRowView(message: message)
@@ -115,6 +118,14 @@ struct HomeView: View {
             }
             .sheet(isPresented: $viewModel.openProfile) {
                 ProfileView()
+            }
+        }
+        .onAppear {
+            // Delay showing the empty state
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                withAnimation {
+                    showEmptyState = true
+                }
             }
         }
         .task {

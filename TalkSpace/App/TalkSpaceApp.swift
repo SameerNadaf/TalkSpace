@@ -26,7 +26,8 @@ struct TalkSpaceApp: App {
     var body: some Scene {
         WindowGroup {
             if isCheckingAuth {
-                ProgressView("Loading...")
+                ProgressView()
+                    .opacity(0.001)
                     .onAppear {
                         // Safe to access Auth here because Firebase is configured
                         if Auth.auth().currentUser != nil {
