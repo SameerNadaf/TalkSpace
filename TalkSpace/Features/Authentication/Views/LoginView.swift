@@ -69,8 +69,8 @@ struct LoginView: View {
                 HomeView()
             }
         }
-        .alert("Heyy!!!", isPresented: $viewModel.showAlert) {
-            Button("OK") {
+        .alert("Oops!", isPresented: $viewModel.showAlert) {
+            Button("OK", role: .cancel) {
                 
             }
         } message: {

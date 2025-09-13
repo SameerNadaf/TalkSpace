@@ -73,6 +73,14 @@ struct EditNameView: View {
                 }
             }
         }
+        
+        .alert("Oops!", isPresented: $viewModel.showError) {
+            Button("OK", role: .cancel){ }
+        } message: {
+            if let msg = viewModel.errorMessage {
+                Text(msg)
+            }
+        }
     }
 }
 

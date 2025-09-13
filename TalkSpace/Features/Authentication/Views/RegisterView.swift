@@ -71,7 +71,7 @@ struct RegisterView: View {
             }
             
         }
-        .alert("Heyy!!!", isPresented: $viewModel.showAlert) {
+        .alert("Oops!", isPresented: $viewModel.showAlert) {
             Button("OK") {
                 
             }

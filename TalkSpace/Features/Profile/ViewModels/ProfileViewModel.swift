@@ -16,6 +16,9 @@ final class ProfileViewModel: ObservableObject {
     @Published var bio: String = "Busy building something new..."
     
     @Published var showEditName: Bool = false
+    @Published var errorMessage: String? = nil
+    @Published var showError: Bool = false
+    
     @Published var name: String = "" {
         didSet {
             if name.count > 25 {
@@ -96,9 +99,13 @@ final class ProfileViewModel: ObservableObject {
                 completion() // Call completion to close view
             } else {
                 print("Please enter a valid name")
+                errorMessage = "Please enter a valid name"
+                showError = true
             }
         } catch {
             print("Error updating user name: \(error.localizedDescription)")
+            errorMessage = "Error updating user name: \(error.localizedDescription)"
+            showError = true
         }
     }
     
