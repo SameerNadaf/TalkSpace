@@ -69,7 +69,7 @@ struct HomeView: View {
                 Button("CANCEL", role: .cancel) { }
                 
             } message: { message in
-                Text("Are you sure you want to delete your chat with \(message.userName)?")
+                Text("Are you sure you want to delete your recent chat with \(message.userName)?")
             }
             
             .navigationDestination(for: RecentMessage.self) { message in
